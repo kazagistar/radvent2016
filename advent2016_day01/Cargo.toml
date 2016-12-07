@@ -1,0 +1,8 @@
+[package]
+name = "advent2016_day01"
+version = "0.1.0"
+authors = ["Jakub Gedeon <jgedeon@sofi.com>"]
+license = "Zlib"
+
+[dependencies]
+nom = "^2.0"
