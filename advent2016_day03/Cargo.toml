@@ -1,0 +1,9 @@
+[package]
+name = "advent2016_day03"
+version = "0.1.0"
+authors = ["Jakub Gedeon <jgedeon@sofi.com>"]
+license = "Zlib"
+
+[dependencies]
+regex = "*"
+lazy_static = "*"
