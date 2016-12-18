@@ -23,6 +23,11 @@ impl LetterCounter {
         let (index, _) = self.counts.iter().enumerate().max_by_key(|t| t.1).unwrap();
         char::from_u32(index as u32 + ('a' as u32)).unwrap()
     }
+
+    fn min(&self) -> char {
+        let (index, _) = self.counts.iter().enumerate().min_by_key(|t| t.1).unwrap();
+        char::from_u32(index as u32 + ('a' as u32)).unwrap()
+    }
 }
 
 struct FreqCounter {
@@ -49,6 +54,10 @@ impl FreqCounter {
     fn maximums(&self) -> String {
         self.data.iter().map(LetterCounter::max).collect()
     }
+
+    fn minimums(&self) -> String {
+        self.data.iter().map(LetterCounter::min).collect()
+    }
 }
 
 fn read_file_lines() -> Lines<BufReader<File>> {
@@ -60,17 +69,19 @@ fn read_file_lines() -> Lines<BufReader<File>> {
     BufRead::lines(reader)
 }
 
-fn solve() -> String {
+fn solve() -> (String, String) {
     let mut lines = read_file_lines();
     let mut counter = FreqCounter::from_first_line(&lines.next().unwrap().unwrap());
     for line in lines.map(|n| n.unwrap()) {
         counter.process(&line);
     }
-    counter.maximums()
+    (counter.maximums(), counter.minimums())
 }
 
 fn main() {
-    println!("{}", solve());
+    let (maxs, mins) = solve();
+    println!("Part 1: {}", maxs);
+    println!("Part 2: {}", mins);
 }
 
 #[cfg(test)]
