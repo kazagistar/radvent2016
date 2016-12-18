@@ -6,6 +6,7 @@ use regex::Regex;
 use std::fs::File;
 use std::io::{BufReader, Lines};
 use std::collections::HashMap;
+use std::char;
 
 fn parse_line<'a>(line: &'a str) -> (&'a str, &'a str, i32) {
     lazy_static! {
@@ -49,12 +50,33 @@ fn checksum(items: &str) -> String {
     counts.iter().take(5).map(|t| t.0).cloned().collect()
 }
 
-fn solve1() -> i32 {
+fn rotate(c: char, n: u32) -> char {
+    let offset = 'a' as u32;
+    match c {
+        '-' => ' ',
+        'a' ... 'z' => {
+            let c = (c as u32) - offset;
+            let rotated = (c + n) % 26 + offset;
+            char::from_u32(rotated).unwrap()
+        },
+        _ => c,
+    }
+}
+
+fn rotate_all(s: &str, n: u32) -> String {
+    s.chars().map(|c| rotate(c, n)).collect()
+}
+
+fn solve() -> i32 {
     read_file_lines()
         .filter_map(|s| {
             let line = s.unwrap();
             let (code, chk, id) = parse_line(&line);
             if &checksum(code) == chk {
+                let decoded = rotate_all(&code, id as u32);
+                if decoded.contains("pole") {
+                    println!("{}: {}", id, decoded);
+                }
                 Some(id)
             } else {
                 None
@@ -64,12 +86,12 @@ fn solve1() -> i32 {
 }
 
 fn main() {
-    println!("{}", solve1());
+    println!("TOTAL: {}", solve());
 }
 
 #[cfg(test)]
 mod tests {
-    use super::{parse_line, checksum};
+    use super::{parse_line, checksum, rotate, rotate_all};
 
     #[test]
     fn parse() {
@@ -81,5 +103,11 @@ mod tests {
     #[test]
     fn matching() {
         assert_eq!(&checksum("aaaaa-bbb-z-y-x"), "abxyz");
+    }
+
+    #[test]
+    fn rotations() {
+        assert_eq!(rotate('a',1), 'b');
+        assert_eq!(&rotate_all("qzmt-zixmtkozy-ivhz", 343), "very encrypted name")
     }
 }
